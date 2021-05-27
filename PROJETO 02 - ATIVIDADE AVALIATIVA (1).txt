@@ -1,0 +1,157 @@
+DROP TABLE SUB_SINDICO
+DROP TABLE SINDICO
+DROP TABLE FUNCIONARIO
+DROP TABLE EMPRESA
+DROP TABLE MULTA
+DROP TABLE VISITANTE
+DROP TABLE MORADOR
+
+CREATE TABLE MORADOR ( 
+cod_morador INTEGER NOT NULL, 
+nome_morador VARCHAR(50) NOT NULL, 
+apto_morador INTEGER NOT NULL,
+PRIMARY KEY (cod_morador, nome_morador, apto_morador) 
+);
+
+CREATE TABLE VISITANTE ( 
+nome_visitante VARCHAR(50) NOT NULL, 
+rg_visitante INTEGER NOT NULL, 
+cod_morador INTEGER NOT NULL, 
+nome_morador VARCHAR(50) NOT NULL, 
+apto_morador INTEGER NOT NULL, 
+FOREIGN KEY (cod_morador, nome_morador, apto_morador) REFERENCES MORADOR(cod_morador, nome_morador, apto_morador) 
+) 
+;
+
+CREATE TABLE MULTA ( 
+valor_multa INTEGER,
+cod_morador INTEGER NOT NULL, 
+nome_morador VARCHAR(50) NOT NULL, 
+apto_morador INTEGER NOT NULL, 
+FOREIGN KEY (cod_morador, nome_morador, apto_morador) REFERENCES MORADOR(cod_morador, nome_morador, apto_morador) 
+) 
+;
+
+CREATE TABLE EMPRESA ( 
+nome_empresa VARCHAR(50) NOT NULL, 
+cnpj INTEGER NOT NULL, 
+servico_descricao VARCHAR(100) NOT NULL,
+PRIMARY KEY (nome_empresa, cnpj, servico_descricao) 
+);
+
+CREATE TABLE FUNCIONARIO ( 
+cod_funcionario INTEGER NOT NULL, 
+nome_funcionario VARCHAR(50) NOT NULL, 
+nome_empresa VARCHAR(50) NOT NULL, 
+cnpj INTEGER NOT NULL, 
+servico_descricao VARCHAR(100) NOT NULL, 
+valor_servico INTEGER NOT NULL,
+PRIMARY KEY (cod_funcionario, nome_funcionario),
+FOREIGN KEY (nome_empresa, cnpj, servico_descricao) REFERENCES EMPRESA (nome_empresa, cnpj, servico_descricao) 
+);
+
+CREATE TABLE SINDICO ( 
+cod_morador INTEGER NOT NULL, 
+nome_morador VARCHAR(50) NOT NULL, 
+apto_morador INTEGER NOT NULL,
+FOREIGN KEY (cod_morador, nome_morador, apto_morador) REFERENCES MORADOR(cod_morador, nome_morador, apto_morador)
+);
+
+CREATE TABLE SUB_SINDICO ( 
+cod_morador INTEGER NOT NULL, 
+nome_morador VARCHAR(50) NOT NULL, 
+apto_morador INTEGER NOT NULL, 
+FOREIGN KEY (cod_morador, nome_morador, apto_morador) REFERENCES MORADOR(cod_morador, nome_morador, apto_morador) 
+);
+
+
+
+DELETE from MORADOR;
+INSERT INTO MORADOR VALUES (3294, 'Joao Pedro', 16);
+INSERT INTO MORADOR VALUES (6451, 'Joao Paulo', 17);
+INSERT INTO MORADOR VALUES (3932, 'Pedro Lucena', 18);
+INSERT INTO MORADOR VALUES (9185, 'Domingos', 19);
+INSERT INTO MORADOR VALUES (2410, 'Joao Vitor', 20);
+INSERT INTO MORADOR VALUES (2378, 'Thiago', 21);
+INSERT INTO MORADOR VALUES (7923, 'Nicolas', 22);
+INSERT INTO MORADOR VALUES (1864, 'Cassio', 23);
+INSERT INTO MORADOR VALUES (7982, 'Eric', 24);
+INSERT INTO MORADOR VALUES (7356, 'Daniel', 25);
+
+
+DELETE from VISITANTE;
+INSERT INTO VISITANTE VALUES ('Maria', 123456780, 6451, 'Joao Paulo', 17);
+INSERT INTO VISITANTE VALUES ('Josephina', 123456781, 3932, 'Pedro Lucena', 18);
+INSERT INTO VISITANTE VALUES ('Giulia', 123456782, 9185, 'Domingos', 19);
+INSERT INTO VISITANTE VALUES ('Ricardão', 123456783, 2378, 'Thiago', 21);
+INSERT INTO VISITANTE VALUES ('Gabriela', 123456784, 3294, 'Joao Pedro', 16);
+INSERT INTO VISITANTE VALUES ('Erica', 123456785, 7982, 'Eric', 24);
+INSERT INTO VISITANTE VALUES ('Rafaela', 123456786, 9185, 'Domingos', 19);
+INSERT INTO VISITANTE VALUES ('Daniela', 123456787, 1864, 'Cassio', 23);
+INSERT INTO VISITANTE VALUES ('Dhandara', 123456788, 7923, 'Nicolas', 22);
+INSERT INTO VISITANTE VALUES ('Robertão', 123456789, 7356, 'Daniel', 25);
+
+
+DELETE from MULTA;
+INSERT INTO MULTA VALUES (1000, 3294, 'Joao Pedro', 16);
+INSERT INTO MULTA VALUES (2000, 6451, 'Joao Paulo', 17);
+INSERT INTO MULTA VALUES (3000, 3932, 'Pedro Lucena', 18);
+INSERT INTO MULTA VALUES (5000, 6451, 'Joao Paulo', 17);
+INSERT INTO MULTA VALUES (250, 2410, 'Joao Vitor', 20);
+INSERT INTO MULTA VALUES (50, 2378, 'Thiago', 21);
+INSERT INTO MULTA VALUES (10000, 7923, 'Nicolas', 22);
+INSERT INTO MULTA VALUES (1750, 1864, 'Cassio', 23);
+INSERT INTO MULTA VALUES (3000, 6451, 'Joao Paulo', 17);
+INSERT INTO MULTA VALUES (9500, 7356, 'Daniel', 25);
+
+
+DELETE from EMPRESA;
+INSERT INTO EMPRESA VALUES ('ALL_FOR_ONE', 987654321, 'faxineiro');
+INSERT INTO EMPRESA VALUES ('ALL_FOR_ONE', 987654321, 'segurança');
+INSERT INTO EMPRESA VALUES ('ALL_FOR_ONE', 987654321, 'jardineiro');
+INSERT INTO EMPRESA VALUES ('ALL_FOR_ONE', 987654321, 'pintor');
+INSERT INTO EMPRESA VALUES ('ALL_FOR_ONE', 987654321, 'zelador');
+
+
+DELETE from FUNCIONARIO;
+INSERT INTO FUNCIONARIO VALUES (192837645, 'José', 'ALL_FOR_ONE', 987654321, 'faxineiro', 1100);
+INSERT INTO FUNCIONARIO VALUES (159374682, 'Gabriel', 'ALL_FOR_ONE', 987654321, 'segurança', 1100);
+INSERT INTO FUNCIONARIO VALUES (186531486, 'Danilo', 'ALL_FOR_ONE', 987654321, 'zelador', 2000);
+INSERT INTO FUNCIONARIO VALUES (987436421, 'Demerval', 'ALL_FOR_ONE', 987654321, 'jardineiro', 1500);
+
+
+
+DELETE from SINDICO;
+INSERT INTO SINDICO VALUES (3294, 'Joao Pedro', 16);
+
+
+DELETE from SUB_SINDICO;
+INSERT INTO SUB_SINDICO VALUES (3932, 'Pedro Lucena', 18);
+
+
+--EX.1
+SELECT Mo.nome_morador, SUM(Mu.valor_multa) AS SOMA_MULTAS
+FROM MORADOR Mo INNER JOIN MULTA Mu
+ON (Mo.cod_morador = Mu.cod_morador)
+GROUP BY Mo.nome_morador
+HAVING SUM(Mu.valor_multa) > 1
+ORDER BY Mo.nome_morador ASC;
+
+
+--EX.2
+SELECT Em.nome_empresa, Em.servico_descricao, Fu.valor_servico 
+FROM FUNCIONARIO Fu LEFT JOIN EMPRESA Em
+ON (Fu.servico_descricao = Em.servico_descricao)
+ORDER BY Em.nome_empresa ASC;
+
+--EX.3
+SELECT Mo.nome_morador, V.nome_visitante, Mu.valor_multa FROM MORADOR Mo
+INNER JOIN VISITANTE V ON V.cod_morador = Mo.cod_morador
+INNER JOIN MULTA Mu ON Mu.cod_morador = Mo.cod_morador
+ORDER BY Mo.nome_morador ASC;
+
+--EX.4
+SELECT MORADOR.nome_morador, MULTA.valor_multa, VISITANTE.nome_visitante
+FROM MORADOR, MULTA, VISITANTE
+WHERE (MULTA.apto_morador > 19)
+AND (MORADOR.apto_morador = MULTA.apto_morador AND MORADOR.apto_morador = VISITANTE.apto_morador)
